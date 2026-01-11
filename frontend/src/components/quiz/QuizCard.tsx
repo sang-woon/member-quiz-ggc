@@ -12,6 +12,19 @@ interface QuizCardProps {
   isCorrect: boolean | null;
 }
 
+// 정당별 색상
+const partyColors: Record<string, string> = {
+  '더불어민주당': 'bg-blue-500',
+  '국민의힘': 'bg-red-500',
+  '정의당': 'bg-yellow-500',
+  '무소속': 'bg-gray-500',
+};
+
+function getPartyColor(party: string | null): string {
+  if (!party) return 'bg-gray-400';
+  return partyColors[party] || 'bg-gray-400';
+}
+
 export function QuizCard({
   question,
   onAnswer,
@@ -37,12 +50,12 @@ export function QuizCard({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-lg mx-auto">
       {/* 의원 사진 */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="flex justify-center mb-8"
+        className="flex justify-center mb-6"
       >
         <div className="relative">
           <motion.div
@@ -54,7 +67,7 @@ export function QuizCard({
                 : {}
             }
             transition={{ duration: 0.3 }}
-            className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white shadow-xl"
+            className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-xl"
           >
             <OptimizedImage
               src={answer.photoUrl}
@@ -71,9 +84,9 @@ export function QuizCard({
                 exit={{ scale: 0 }}
                 className={`
                   absolute -bottom-2 -right-2
-                  w-12 h-12 rounded-full
+                  w-10 h-10 rounded-full
                   flex items-center justify-center
-                  text-2xl font-bold
+                  text-xl font-bold
                   ${isCorrect ? 'bg-success' : 'bg-error'}
                   text-white shadow-lg
                 `}
@@ -86,48 +99,71 @@ export function QuizCard({
       </motion.div>
 
       {/* 질문 */}
-      <h2 className="text-xl font-bold text-center text-neutral-text mb-6">
+      <h2 className="text-lg font-bold text-center text-neutral-text mb-4">
         이 의원의 이름은?
       </h2>
 
       {/* 보기 버튼들 */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {options.map((option, index) => (
           <motion.button
             key={option.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }}
             onClick={() => selectedAnswer === null && onAnswer(option.id)}
             disabled={selectedAnswer !== null}
             className={`
               ${getButtonStyle(option)}
-              px-4 py-4
+              px-3 py-3
               rounded-xl
-              font-semibold
               transition-all duration-200
               ${selectedAnswer === null ? 'cursor-pointer' : 'cursor-default'}
             `}
           >
-            {option.name}
+            <div className="flex flex-col items-center gap-1">
+              <span className="font-semibold text-base">{option.name}</span>
+              {/* 정당 배지 */}
+              <span className={`
+                text-xs px-2 py-0.5 rounded-full text-white
+                ${selectedAnswer === null ? getPartyColor(option.party) :
+                  option.id === answer.id ? 'bg-white/30' :
+                  option.id === selectedAnswer ? 'bg-white/30' : 'bg-gray-400'}
+              `}>
+                {option.party || '무소속'}
+              </span>
+            </div>
           </motion.button>
         ))}
       </div>
 
-      {/* 정답 정보 (오답 시 표시) */}
+      {/* 정답 정보 (답변 후 항상 표시) */}
       <AnimatePresence>
-        {selectedAnswer !== null && !isCorrect && (
+        {selectedAnswer !== null && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="mt-6 p-4 bg-primary/10 rounded-xl text-center"
+            className={`mt-4 p-4 rounded-xl ${isCorrect ? 'bg-success/10' : 'bg-primary/10'}`}
           >
-            <p className="text-neutral-muted text-sm">정답</p>
-            <p className="text-lg font-bold text-primary">{answer.name}</p>
-            <p className="text-sm text-neutral-muted">
-              {answer.districtName} / {answer.party}
-            </p>
+            <div className="text-center">
+              <p className="text-neutral-muted text-xs mb-1">
+                {isCorrect ? '정답입니다!' : '정답'}
+              </p>
+              <p className="text-xl font-bold text-primary mb-2">{answer.name}</p>
+
+              {/* 상세 정보 */}
+              <div className="flex flex-wrap justify-center gap-2 text-sm">
+                {/* 정당 */}
+                <span className={`px-2 py-1 rounded-full text-white ${getPartyColor(answer.party)}`}>
+                  {answer.party || '무소속'}
+                </span>
+                {/* 지역구 */}
+                <span className="px-2 py-1 rounded-full bg-neutral-200 text-neutral-700">
+                  {answer.districtName}
+                </span>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
