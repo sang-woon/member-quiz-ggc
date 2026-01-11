@@ -77,7 +77,6 @@ def get_db():
         db.close()
 
 
-@app.get("/")
 @app.get("/api")
 def root():
     return {"message": "의원얼굴퀴즈 API", "status": "running"}
