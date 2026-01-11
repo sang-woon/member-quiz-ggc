@@ -1,4 +1,5 @@
 """의원얼굴퀴즈 API 서버"""
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -14,9 +15,13 @@ app = FastAPI(
 )
 
 # CORS 설정
+# Vercel 배포시에는 같은 origin이므로 CORS 불필요하지만,
+# 로컬 개발과 다른 도메인 허용을 위해 설정
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:5174,http://localhost:3000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

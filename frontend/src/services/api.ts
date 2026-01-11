@@ -12,8 +12,11 @@ import type {
   ApiListResponse,
 } from '../types';
 
+// 프로덕션에서는 같은 origin, 개발에서는 프록시 사용
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
