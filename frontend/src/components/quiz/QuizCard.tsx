@@ -3,6 +3,7 @@
  */
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Member, QuizQuestion } from '../../types';
+import { OptimizedImage } from '../common/OptimizedImage';
 
 interface QuizCardProps {
   question: QuizQuestion;
@@ -55,10 +56,12 @@ export function QuizCard({
             transition={{ duration: 0.3 }}
             className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white shadow-xl"
           >
-            <img
+            <OptimizedImage
               src={answer.photoUrl}
               alt="의원 사진"
-              className="w-full h-full object-cover"
+              width={224}
+              height={224}
+              className="w-full h-full"
             />
           </motion.div>
           {/* 결과 표시 배지 */}
