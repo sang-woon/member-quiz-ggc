@@ -1,69 +1,65 @@
 /**
- * 의원 정보 타입
+ * 프론트엔드 타입 정의
+ * contracts/api.contract.ts와 동기화
  */
-export interface Member {
-  id: number
-  name: string
-  photo_url: string
-  party: string
-  district_id: number
-  district_name: string
-  term: number
-}
 
-/**
- * 지역구 정보 타입
- */
+/** 지역구 */
 export interface District {
-  id: number
-  name: string
-  region: string
+  id: number;
+  name: string;
+  region: string;
 }
 
-/**
- * 위원회 정보 타입
- */
+/** 위원회 */
 export interface Committee {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
-/**
- * 퀴즈 문제 타입
- */
+/** 의원 기본 정보 */
+export interface Member {
+  id: number;
+  name: string;
+  photoUrl: string;
+  party: string | null;
+  districtId: number;
+  districtName: string;
+  term: number;
+}
+
+/** 의원 상세 정보 (위원회 포함) */
+export interface MemberDetail extends Member {
+  committees: Committee[];
+}
+
+/** 퀴즈 문제 */
 export interface QuizQuestion {
-  member_id: number
-  photo_url: string
-  options: QuizOption[]
-  correct_index: number
+  answer: Member;
+  options: Member[];
 }
 
-/**
- * 퀴즈 선택지 타입
- */
-export interface QuizOption {
-  id: number
-  name: string
-}
-
-/**
- * 퀴즈 결과 타입
- */
+/** 퀴즈 결과 */
 export interface QuizResult {
-  total_questions: number
-  correct_answers: number
-  accuracy: number
-  answers: QuizAnswer[]
+  totalQuestions: number;
+  correctAnswers: number;
+  accuracy: number;
 }
 
-/**
- * 개별 문제 답변 타입
- */
-export interface QuizAnswer {
-  question_index: number
-  member_id: number
-  member_name: string
-  selected_id: number
-  selected_name: string
-  is_correct: boolean
+/** 페이지네이션 메타 정보 */
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+}
+
+/** 단일 항목 응답 */
+export interface ApiResponse<T> {
+  data: T;
+}
+
+/** 목록 응답 */
+export interface ApiListResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
 }

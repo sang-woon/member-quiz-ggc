@@ -23,11 +23,16 @@ export default {
           red: '#FF4B4B',
           purple: '#CE82FF',
         },
+        success: '#58CC02',
+        error: '#FF4B4B',
         neutral: {
           bg: '#F7F7F7',
           card: '#FFFFFF',
           text: '#3C3C3C',
           muted: '#AFAFAF',
+          border: '#E5E5E5',
+          100: '#F0F0F0',
+          50: '#F8F8F8',
         },
       },
       fontFamily: {

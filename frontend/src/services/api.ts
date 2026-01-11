@@ -1,60 +1,73 @@
-import axios from 'axios'
-import type { Member, District, Committee, QuizQuestion } from '../types'
+/**
+ * API 서비스
+ */
+import axios from 'axios';
+import type {
+  Member,
+  MemberDetail,
+  District,
+  Committee,
+  QuizQuestion,
+  ApiResponse,
+  ApiListResponse,
+} from '../types';
 
-const api = axios.create({
+const client = axios.create({
   baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
-})
+});
 
-/**
- * 의원 목록 조회
- */
-export async function getMembers(params?: {
-  district_id?: number
-  committee_id?: number
-}): Promise<Member[]> {
-  const { data } = await api.get<Member[]>('/members', { params })
-  return data
-}
+export const api = {
+  /**
+   * 의원 목록 조회
+   */
+  async getMembers(params?: {
+    districtId?: number;
+    committeeId?: number;
+    party?: string;
+    page?: number;
+    size?: number;
+  }): Promise<ApiListResponse<Member>> {
+    const { data } = await client.get<ApiListResponse<Member>>('/members', { params });
+    return data;
+  },
 
-/**
- * 의원 상세 조회
- */
-export async function getMember(id: number): Promise<Member> {
-  const { data } = await api.get<Member>(`/members/${id}`)
-  return data
-}
+  /**
+   * 의원 상세 조회
+   */
+  async getMember(id: number): Promise<ApiResponse<MemberDetail>> {
+    const { data } = await client.get<ApiResponse<MemberDetail>>(`/members/${id}`);
+    return data;
+  },
 
-/**
- * 지역구 목록 조회
- */
-export async function getDistricts(): Promise<District[]> {
-  const { data } = await api.get<District[]>('/districts')
-  return data
-}
+  /**
+   * 지역구 목록 조회
+   */
+  async getDistricts(): Promise<ApiResponse<District[]>> {
+    const { data } = await client.get<ApiResponse<District[]>>('/districts');
+    return data;
+  },
 
-/**
- * 위원회 목록 조회
- */
-export async function getCommittees(): Promise<Committee[]> {
-  const { data } = await api.get<Committee[]>('/committees')
-  return data
-}
+  /**
+   * 위원회 목록 조회
+   */
+  async getCommittees(): Promise<ApiResponse<Committee[]>> {
+    const { data } = await client.get<ApiResponse<Committee[]>>('/committees');
+    return data;
+  },
 
-/**
- * 퀴즈 문제 생성
- */
-export async function generateQuiz(params?: {
-  count?: number
-  district_id?: number
-  committee_id?: number
-}): Promise<QuizQuestion[]> {
-  const { data } = await api.get<QuizQuestion[]>('/quiz/generate', {
-    params: { count: 10, ...params },
-  })
-  return data
-}
+  /**
+   * 퀴즈 문제 생성
+   */
+  async getQuizQuestion(params?: {
+    districtId?: number;
+    committeeId?: number;
+  }): Promise<QuizQuestion> {
+    const { data } = await client.get<QuizQuestion>('/quiz', { params });
+    return data;
+  },
+};
 
-export default api
+export default client;
