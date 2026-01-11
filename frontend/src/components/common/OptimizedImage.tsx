@@ -1,47 +1,32 @@
 /**
  * 최적화된 이미지 컴포넌트
- * - wsrv.nl 프록시를 통한 이미지 리사이징
  * - 로딩 상태 표시
  * - lazy loading
+ * - 에러 상태 처리
  */
 import { useState } from 'react';
 
 interface OptimizedImageProps {
   src: string;
   alt: string;
-  width?: number;
-  height?: number;
   className?: string;
-}
-
-/**
- * 이미지 URL을 최적화된 프록시 URL로 변환
- */
-function getOptimizedUrl(src: string, width: number, height: number): string {
-  // wsrv.nl 이미지 프록시 사용 (무료, 빠름)
-  const encodedUrl = encodeURIComponent(src);
-  return `https://wsrv.nl/?url=${encodedUrl}&w=${width}&h=${height}&fit=cover&q=80`;
 }
 
 export function OptimizedImage({
   src,
   alt,
-  width = 224,
-  height = 224,
   className = '',
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const optimizedSrc = getOptimizedUrl(src, width, height);
-
   return (
     <div className={`relative ${className}`}>
       {/* 로딩 플레이스홀더 */}
       {isLoading && !hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 animate-pulse">
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 animate-pulse rounded-full">
           <svg
-            className="w-12 h-12 text-neutral-300 animate-spin"
+            className="w-10 h-10 text-neutral-300 animate-spin"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -64,7 +49,7 @@ export function OptimizedImage({
 
       {/* 에러 플레이스홀더 */}
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 rounded-full">
           <svg
             className="w-16 h-16 text-neutral-300"
             fill="none"
@@ -83,15 +68,16 @@ export function OptimizedImage({
 
       {/* 실제 이미지 */}
       <img
-        src={optimizedSrc}
+        src={src}
         alt={alt}
         loading="lazy"
+        decoding="async"
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
           setHasError(true);
         }}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${
+        className={`w-full h-full object-cover transition-opacity duration-200 ${
           isLoading || hasError ? 'opacity-0' : 'opacity-100'
         }`}
       />

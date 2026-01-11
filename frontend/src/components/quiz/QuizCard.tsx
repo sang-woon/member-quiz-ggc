@@ -59,8 +59,6 @@ export function QuizCard({
             <OptimizedImage
               src={answer.photoUrl}
               alt="의원 사진"
-              width={224}
-              height={224}
               className="w-full h-full"
             />
           </motion.div>
